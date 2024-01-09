@@ -80,22 +80,25 @@ const formatErrorMessage = (report) => {
   ) {
     return formatEqualStringErrorMessage(report);
   }
-  return (
-    report.message +
-    ":\n" +
-    (report.errors ?? []).map(({ ruleId, line, column, message }) => {
-      return JSON.stringify(
-        {
-          ruleId,
-          line,
-          column,
-          message,
-        },
-        null,
-        2,
-      );
-    })
-  );
+  if ((report.errors?.length ?? 0) > 0) {
+    return (
+      report.message +
+      ":\n" +
+      (report.errors ?? []).map(({ ruleId, line, column, message }) => {
+        return JSON.stringify(
+          {
+            ruleId,
+            line,
+            column,
+            message,
+          },
+          null,
+          2,
+        );
+      })
+    );
+  }
+  return `${report.error.message}\n${report.error.stack}`;
 };
 
 export const formatError = (report) => {

@@ -15,17 +15,15 @@ const createConfigRules = (rules) => {
   );
 };
 
-const configs = {
-  recommended: {
-    plugins: [PLUGIN_NAME],
-    rules: Object.entries(rules).reduce,
-  },
-};
-
 export default {
   rules,
   configs: {
     recommended: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
       plugins: [PLUGIN_NAME],
       rules: createConfigRules(rules),
     },

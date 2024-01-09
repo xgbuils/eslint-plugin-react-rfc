@@ -10,7 +10,10 @@
   ],
   "author": "Xavier Garcia Buils <xgbuils@gmail.com>",
   "main": "./lib/main.js",
-  "exports": "./src/index.js",
+  "exports": {
+    "import": "./src/index.js",
+    "require": "./lib/main.js"
+  },
   "files": [
     "src",
     "lib"
@@ -22,7 +25,7 @@
     "lint:js": "eslint .",
     "test": "node scripts/tests.js",
     "update:eslint-docs": "eslint-doc-generator",
-    "build": "swc src -d lib && node scripts/create-main-cjs.js",
+    "build": "node scripts/build.js",
     "prepare": "npm run build"
   },
   "dependencies": {
@@ -38,8 +41,7 @@
     "glob": "^10.3.10",
     "mocha": "^10.0.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.1.1",
-    "swc-command": "^1.0.5"
+    "prettier": "^3.1.1"
   },
   "engines": {
     "node": "^14.17.0 || ^16.0.0 || >= 18.0.0"

@@ -1,11 +1,10 @@
-import { createCallable } from "../nodes/Callable.js";
-
 const isParentPredicateMap = {
   MethodDefinition: (node) => node.type === "FunctionExpression",
   FunctionDeclaration: () => true,
   ArrowFunctionExpression: (node) => node.parent.type !== "CallExpression",
   FunctionExpression: (node) =>
     !["CallExpression", "MethodDefinition"].includes(node.parent.type),
+  Program: () => true,
 };
 const never = () => false;
 
@@ -32,8 +31,7 @@ const createParentTraverser = (node) => {
       }
       return {
         end(callback) {
-          const callable = createCallable(result.functionNode);
-          callback(callable);
+          callback(result.functionNode);
         },
       };
     },

@@ -1,3 +1,4 @@
+import { createCallable } from "./nodes/Callable.js";
 import { createComponentDefinitionInRenderValidator } from "./utils/errorCollector.js";
 import { createParentTraverser } from "./utils/parentTraverser.js";
 
@@ -35,7 +36,8 @@ const validate = (context, node, componentName) => {
         validator.evaluateVariables(node);
       }
     })
-    .end((callable) => {
+    .end((node) => {
+      const callable = createCallable(node);
       validator.evaluateParams(callable);
       const nodes = validator.getInvalidDefinitions();
       reporter.report(callable.getName(), nodes);
