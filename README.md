@@ -1,24 +1,21 @@
 # eslint-plugin-react-rfc
 
-experimental React specific linting rules
+Experimental React specific linting rules
+
+## Motivation
+
+
+[eslint-plugin-react][eslint-plugin-react] has a consolidated bunch of React linting rules. However it's difficult to have an space for proves of concept. This package collects a set of experimental rules that intents to be moved to `eslint-plugin-react` once get madurity.
 
 ## Installation
-
-You'll first need to install [ESLint](https://eslint.org/):
-
-```sh
-npm i eslint --save-dev
-```
-
-Next, install `eslint-plugin-react-rfc`:
 
 ```sh
 npm install eslint-plugin-react-rfc --save-dev
 ```
 
-## Usage
+## Configuration (legacy: `.eslintrc*`)
 
-Add `react-rfc` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
+Add `react-rfc` to the plugins section of your `.eslintrc*` configuration file. You can omit the `eslint-plugin-` prefix:
 
 ```json
 {
@@ -26,14 +23,12 @@ Add `react-rfc` to the plugins section of your `.eslintrc` configuration file. Y
 }
 ```
 
-Then configure the rules you want to use under the rules section.
+Use our preset to get reasonable defaults:
 
 ```json
-{
-  "rules": {
-    "react-rfc/rule-name": 2
-  }
-}
+"extends": [
+  "plugin:react-rfc/recommended"
+],
 ```
 
 ## Rules
@@ -49,4 +44,4 @@ Then configure the rules you want to use under the rules section.
 
 <!-- end auto-generated rules list -->
 
-## Shareable configs
+[eslint-plugin-react]: https://github.com/jsx-eslint/eslint-plugin-react
