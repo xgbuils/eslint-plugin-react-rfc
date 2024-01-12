@@ -63,15 +63,19 @@ export default {
         properties: {
           allowComponentMap: {
             type: "boolean",
+            description: "allow to define a component from a map of components",
           },
           allowNullishOperator: {
             type: "boolean",
+            description: "allow to define a component using nullish operator",
           },
           allowOrOperator: {
             type: "boolean",
+            description: "allow to define a component using or operator",
           },
           allowTernary: {
             type: "boolean",
+            description: "allow to define a component using ternary operator",
           },
         },
         additionalProperties: false,
