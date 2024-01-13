@@ -3,10 +3,10 @@ import { createComponentDefinitionInRenderValidator } from "./utils/errorCollect
 import { createParentTraverser } from "./utils/parentTraverser.js";
 
 const avoidComponentDefInRender =
-  "Do not define component {{ componentName }} in the same scope is rendered. Move the component definition out of the {{ functionName }} scope. More info: https://react.dev/learn/your-first-component#nesting-and-organizing-components";
+  "component {{ componentName }} is defined in the same scope is rendered";
 
 const createReporter = (context, componentName) => ({
-  report: (functionName, nodes) => {
+  report: (nodes) => {
     if (nodes.length > 0) {
       nodes.forEach((node) => {
         context.report({
@@ -14,7 +14,6 @@ const createReporter = (context, componentName) => ({
           messageId: "avoidComponentDefInRender",
           data: {
             componentName,
-            functionName: functionName ?? "function",
           },
         });
       });
@@ -40,7 +39,7 @@ const validate = (context, node, componentName) => {
       const callable = createCallable(node);
       validator.evaluateParams(callable);
       const nodes = validator.getInvalidDefinitions();
-      reporter.report(callable.getName(), nodes);
+      reporter.report(nodes);
     });
 };
 

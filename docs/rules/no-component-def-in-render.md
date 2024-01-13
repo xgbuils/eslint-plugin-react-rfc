@@ -1,5 +1,7 @@
 # Disallow to define a component in render scope (`react-rfc/no-component-def-in-render`)
 
+React docs recommends to [not define components inside other components](https://react.dev/learn/your-first-component#nesting-and-organizing-components). This rule prevents this kind of definitions.
+
 💼 This rule is enabled in the ✅ `recommended` [config](https://github.com/xgbuils/eslint-plugin-react-rfc/#shareable-configs).
 
 <!-- end auto-generated rule header -->

@@ -1,5 +1,5 @@
 const ERROR_MESSAGE =
-  "Do not define component NestedComponent in the same scope is rendered. Move the component definition out of the ParentComponent scope. More info: https://react.dev/learn/your-first-component#nesting-and-organizing-components";
+  "component NestedComponent is defined in the same scope is rendered";
 
 const valid = [];
 
