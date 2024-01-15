@@ -16,6 +16,10 @@ const createVariableCollector = (variables) => {
         });
       } else if (id.type === "ObjectPattern") {
         id.properties.forEach((property) => {
+          if (property.type === "RestElement") {
+            this.add(property.argument, init, declaratorNode);
+            return;
+          }
           let propValue;
           if (init.type === "ObjectExpression") {
             propValue =
@@ -37,6 +41,10 @@ const createVariableCollector = (variables) => {
         });
       } else if (id.type === "ArrayPattern") {
         id.elements.forEach((element, index) => {
+          if (element?.type === "RestElement") {
+            this.add(element.argument, init, declaratorNode);
+            return;
+          }
           let elementValue;
           if (init.type === "ArrayExpression") {
             elementValue = init.elements[index] ?? null;

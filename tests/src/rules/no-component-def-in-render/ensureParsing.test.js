@@ -23,10 +23,30 @@ const valid = [
     version: 2020,
     description: "using spread operator in params",
     code: `
-			const ParentComponent = ({prop: [ok, ...rest]}) => {
-				return ok ? <Component data={rest[1]} /> : null;
-			}
-		`,
+      const ParentComponent = ({prop: [ok, ...rest]}) => {
+        return ok ? <Component data={rest[1]} /> : null;
+      }
+    `,
+  },
+  {
+    version: 2020,
+    description: "using spread operator in variable declaration",
+    code: `
+      const ParentComponent = (props) => {
+        const {ok, ...rest} = props;
+        return ok ? <Component data={rest.data} /> : null;
+      }
+    `,
+  },
+  {
+    version: 2020,
+    description: "using spread operator in variable declaration",
+    code: `
+      const ParentComponent = ({prop}) => {
+        const [ok, ...rest] = prop;
+        return ok ? <Component data={rest[1]} /> : null;
+      }
+    `,
   },
 ];
 
