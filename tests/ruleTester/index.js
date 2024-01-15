@@ -5,8 +5,11 @@ import { formatError, formatErrorSummary, formatSuccess } from "./format.js";
 import { createReport } from "./createReport.js";
 import plugin from "../../src/index.js";
 
-// eslint-disable-next-line no-unused-vars
-const removeDescription = ({ description, ...props }) => props;
+const selectTestProps = ({ code, errors, options }) => ({
+  code,
+  errors,
+  ...(options && { options }),
+});
 
 const createTestGroup = ({ valid, invalid, file, versions, ruleName } = {}) => {
   const errors = [];
@@ -22,12 +25,12 @@ const createTestGroup = ({ valid, invalid, file, versions, ruleName } = {}) => {
     });
 
   const runRuleTest = (type, { version, ruleName }) => {
-    const ruleTester = getRuleTester(version);
     return (useCase, index) => {
+      const ruleTester = getRuleTester(useCase.version ?? version);
       const cases = {
         valid: [],
         invalid: [],
-        [type === "valid" ? "valid" : "invalid"]: [removeDescription(useCase)],
+        [type === "valid" ? "valid" : "invalid"]: [selectTestProps(useCase)],
       };
       try {
         ruleTester.run(ruleName, plugin.rules[ruleName], cases);

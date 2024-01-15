@@ -3,10 +3,16 @@ const getIdentifiers = (node) => {
     return [node];
   }
   if (node.type === "ObjectPattern") {
-    return node.properties.flatMap(({ value }) => getIdentifiers(value));
+    return node.properties.flatMap(({ type, value, argument }) =>
+      getIdentifiers(type === "RestElement" ? argument : value),
+    );
   }
   if (node.type === "ArrayPattern") {
-    return node.elements.flatMap((element) => getIdentifiers(element));
+    return node.elements.flatMap((element) =>
+      getIdentifiers(
+        element.type === "RestElement" ? element.argument : element,
+      ),
+    );
   }
   return [];
 };
