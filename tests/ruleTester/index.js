@@ -12,6 +12,7 @@ const selectTestProps = ({ code, errors, options }) => ({
 });
 
 const createTestGroup = ({ valid, invalid, file, versions, ruleName } = {}) => {
+  let numberOfTests = 0;
   const errors = [];
   const ruleTesters = {};
   const getRuleTester = (version) =>
@@ -26,7 +27,11 @@ const createTestGroup = ({ valid, invalid, file, versions, ruleName } = {}) => {
 
   const runRuleTest = (type, { version, ruleName }) => {
     return (useCase, index) => {
-      const ruleTester = getRuleTester(useCase.version ?? version);
+      if (!!useCase.version && version !== useCase.version) {
+        return;
+      }
+      ++numberOfTests;
+      const ruleTester = getRuleTester(version);
       const cases = {
         valid: [],
         invalid: [],
@@ -58,9 +63,14 @@ const createTestGroup = ({ valid, invalid, file, versions, ruleName } = {}) => {
           valid.forEach(runRuleTest("valid", options));
           invalid.forEach(runRuleTest("invalid", options));
         });
-        return errors;
+        return {
+          errors,
+          numberOfTests,
+        };
       } catch (error) {
-        return [];
+        return {
+          errors: [error],
+        };
       }
     },
   };
@@ -82,9 +92,7 @@ const createRuleTester = () => {
             versions = [2015, 2020],
             // eslint-disable-next-line node/no-unsupported-features/es-syntax
           } = await import(filePath);
-          const numberOfTests =
-            (valid.length + invalid.length) * versions.length;
-          const errors = createTestGroup({
+          const { errors, numberOfTests } = createTestGroup({
             file,
             valid,
             invalid,
@@ -94,12 +102,21 @@ const createRuleTester = () => {
           }).run();
           if (errors.length > 0) {
             hasErrors = true;
-            console.log(formatErrorSummary({ file, numberOfTests, errors }));
+            console.log(
+              formatErrorSummary({
+                file,
+                numberOfTests,
+                errors,
+              }),
+            );
             errors.forEach((error) => {
               console.log(formatError(error));
             });
           } else {
-            const summary = formatSuccess({ file, numberOfTests });
+            const summary = formatSuccess({
+              file,
+              numberOfTests,
+            });
             console.log(summary);
           }
         }),

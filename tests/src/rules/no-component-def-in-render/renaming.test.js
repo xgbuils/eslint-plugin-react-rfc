@@ -26,8 +26,8 @@ const valid = [
   {
     description: "multiple nested component assign in different scopes",
     code: `
-      const ParentComponent = () => {
-        const SecondComponent = FirstComponent;
+			const ParentComponent = () => {
+				const SecondComponent = FirstComponent;
 				if (SecondComponent) {
 					const ThirdComponent = SecondComponent;
 					if (ThirdComponent) {
@@ -35,9 +35,9 @@ const valid = [
 						return <NestedComponent />;
 					}
 				}
-        return <FirstComponent />;
-      }
-    `,
+				return <FirstComponent />;
+			}
+		`,
   },
   {
     description: "simple object destructuring renaming",
@@ -131,4 +131,6 @@ const invalid = [
   },
 ];
 
-export { valid, invalid };
+const versions = [2015];
+
+export { valid, invalid, versions };

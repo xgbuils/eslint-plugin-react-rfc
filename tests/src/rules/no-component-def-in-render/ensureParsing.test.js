@@ -48,6 +48,32 @@ const valid = [
       }
     `,
   },
+  {
+    version: 2020,
+    description: "using spread element in variable init value",
+    code: `
+      const ParentComponent = (props) => {
+        const { type, ok } = {
+          type,
+          ...props.config,
+        };
+        return ok ? <Component type={type} /> : null;
+      }
+    `,
+  },
+  {
+    version: 2020,
+    description: "using spread element in variable init value",
+    code: `
+      const ParentComponent = (props) => {
+        const [type, ok] = [
+          type,
+          ...props.config,
+        ];
+        return ok ? <Component type={type} /> : null;
+      }
+    `,
+  },
 ];
 
 const invalid = [];
