@@ -36,10 +36,12 @@ const validate = (context, node, componentName) => {
       }
     })
     .end((node) => {
-      const callable = createCallable(node);
-      validator.evaluateParams(callable);
-      const nodes = validator.getInvalidDefinitions();
-      reporter.report(nodes);
+      if (node.type !== "Program") {
+        const callable = createCallable(node);
+        validator.evaluateParams(callable);
+        const nodes = validator.getInvalidDefinitions();
+        reporter.report(nodes);
+      }
     });
 };
 

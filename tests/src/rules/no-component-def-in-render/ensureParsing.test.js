@@ -11,6 +11,17 @@ const valid = [
   `,
   },
   {
+    description: "react app index",
+    code: `
+    import React from 'react'
+    const App = () => <div>App!</div>;
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <App />
+    )
+  `,
+  },
+  {
     version: 2020,
     description: "using spread operator in params",
     code: `
