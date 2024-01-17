@@ -1,35 +1,7 @@
+import { createMemberExpressionNode } from "./MemberExpression.js";
+import { createObjectExpression } from "./ObjectExpression.js";
+
 const functionDeclarationTypes = ["ClassDeclaration", "FunctionDeclaration"];
-
-const parseInitValueProperties = (properties) => {
-  let spread;
-  const propValues = {};
-  if (properties) {
-    properties.forEach((property) => {
-      if (property.type === "Property") {
-        propValues[property.key.name] = property;
-      } else if (property.type === "SpreadElement") {
-        spread = property.argument;
-      }
-    });
-  }
-  return {
-    spread,
-    propValues,
-  };
-};
-
-const createMembershipExpression = (object, key) => {
-  const node = {
-    type: "MemberExpression",
-    object,
-    property: {
-      type: "Identifier",
-      name: key,
-    },
-  };
-  node.property.parent = node;
-  return node;
-};
 
 const createVariableCollector = (variables) => {
   return {
@@ -46,30 +18,27 @@ const createVariableCollector = (variables) => {
           parent: declaratorNode.parent,
         });
       } else if (id.type === "ObjectPattern") {
-        const { spread, propValues } = parseInitValueProperties(
-          init.properties,
-        );
+        if (init.type !== "ObjectExpression") {
+          id.properties.forEach((property) => {
+            if (property.type === "RestElement") {
+              return this.add(property.argument, init, declaratorNode);
+            }
+            return this.add(
+              property.value,
+              createMemberExpressionNode(init, property.key.name),
+              declaratorNode,
+            );
+          });
+          return;
+        }
+        const objectExpression = createObjectExpression(init);
         id.properties.forEach((property) => {
           if (property.type === "RestElement") {
             return this.add(property.argument, init, declaratorNode);
           }
-          if (init.type !== "ObjectExpression") {
-            return this.add(
-              property.value,
-              createMembershipExpression(init, property.key.name),
-              declaratorNode,
-            );
-          }
-          const propValue = propValues[property.key.name];
+          const propValue = objectExpression.getValue(property.key.name);
           if (propValue) {
-            return this.add(property.value, propValue.value, declaratorNode);
-          }
-          if (spread) {
-            return this.add(
-              property.value,
-              createMembershipExpression(spread, property.key.name),
-              declaratorNode,
-            );
+            return this.add(property.value, propValue, declaratorNode);
           }
         });
       } else if (id.type === "ArrayPattern") {
@@ -82,15 +51,7 @@ const createVariableCollector = (variables) => {
           if (init.type === "ArrayExpression") {
             elementValue = init.elements[index] ?? null;
           } else {
-            elementValue = {
-              type: "MemberExpression",
-              object: init,
-              property: {
-                type: "Literal",
-                name: index,
-                raw: `${index}`,
-              },
-            };
+            elementValue = createMemberExpressionNode(init, index, "Literal");
             elementValue.property.parent = elementValue;
           }
           this.add(element, elementValue, declaratorNode);

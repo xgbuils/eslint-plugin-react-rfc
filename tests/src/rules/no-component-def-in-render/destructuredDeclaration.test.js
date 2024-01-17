@@ -5,34 +5,34 @@ const valid = [
   {
     description: "another unused component is declared in a object prop",
     code: `
-	const ParentComponent = () => {
-		const { AnotherComponent } = getComponents();
-		return <NestedComponent />;
-	}
-`,
+		const ParentComponent = () => {
+			const { AnotherComponent } = getComponents();
+			return <NestedComponent />;
+		}
+	`,
   },
   {
     description:
       "another unused component is declared and renamed from an object prop",
     code: `
-	const ParentComponent = () => {
-		const { prop: AnotherComponent } = getComponents();
-		return <NestedComponent />;
-	}
-`,
+		const ParentComponent = () => {
+			const { prop: AnotherComponent } = getComponents();
+			return <NestedComponent />;
+		}
+	`,
   },
   {
     description: "another quite deep component is declared in object prop",
     code: `
-	const ParentComponent = () => {
-		const {
-			prop: {
-				foo: { AnotherComponent }
-			}
-		} = getComponents();
-		return <NestedComponent />;
-	}
-`,
+		const ParentComponent = () => {
+			const {
+				prop: {
+					foo: { AnotherComponent }
+				}
+			} = getComponents();
+			return <NestedComponent />;
+		}
+	`,
   },
 ];
 
@@ -86,10 +86,10 @@ const invalid = [
     code: `
 		const ParentComponent = () => {
 			const { 
-        prop: {
-          foo: [ NestedComponent ]
-        }
-      } = getComponents();
+				prop: {
+					foo: [ NestedComponent ]
+				}
+			} = getComponents();
 			return <NestedComponent />;
 		}
 	`,
@@ -97,6 +97,4 @@ const invalid = [
   },
 ];
 
-const versions = [2015];
-
-export { valid, invalid, versions };
+export { valid, invalid };

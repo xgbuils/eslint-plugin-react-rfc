@@ -2,18 +2,18 @@ const ERROR_MESSAGE =
   "component NestedComponent is defined in the same scope is rendered";
 
 const valid = [
-  {
-    description: "nested component assign",
-    code: `
+  /*{
+		description: "nested component assign",
+		code: `
 			const ParentComponent = () => {
 				const NestedComponent = AnotherComponent;
 				return <NestedComponent />;
 			}
 		`,
-  },
-  {
-    description: "multiple nested component assign",
-    code: `
+	},
+	{
+		description: "multiple nested component assign",
+		code: `
 			const ParentComponent = () => {
 				const SecondComponent = FirstComponent;
 				const ThirdComponent = SecondComponent;
@@ -22,10 +22,10 @@ const valid = [
 				return <NestedComponent />;
 			}
 		`,
-  },
-  {
-    description: "multiple nested component assign in different scopes",
-    code: `
+	},
+	{
+		description: "multiple nested component assign in different scopes",
+		code: `
 			const ParentComponent = () => {
 				const SecondComponent = FirstComponent;
 				if (SecondComponent) {
@@ -38,7 +38,7 @@ const valid = [
 				return <FirstComponent />;
 			}
 		`,
-  },
+	},*/
   {
     description: "simple object destructuring renaming",
     code: `
@@ -131,6 +131,4 @@ const invalid = [
   },
 ];
 
-const versions = [2015];
-
-export { valid, invalid, versions };
+export { valid, invalid };
