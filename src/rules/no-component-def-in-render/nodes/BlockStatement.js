@@ -4,61 +4,82 @@ import { createObjectExpression } from "./ObjectExpression.js";
 const functionDeclarationTypes = ["ClassDeclaration", "FunctionDeclaration"];
 
 const createVariableCollector = (variables) => {
-  return {
-    add(id, init, declaratorNode) {
-      if (id === null) {
-        return;
-      }
-      if (id.type === "Identifier") {
-        variables.set(id.name, {
-          type: "VariableDeclarator",
-          loc: id.loc,
-          id,
-          init,
-          parent: declaratorNode.parent,
-        });
-      } else if (id.type === "ObjectPattern") {
-        if (init.type !== "ObjectExpression") {
-          id.properties.forEach((property) => {
-            if (property.type === "RestElement") {
-              return this.add(property.argument, init, declaratorNode);
-            }
-            return this.add(
-              property.value,
-              createMemberExpressionNode(init, property.key.name),
-              declaratorNode,
-            );
-          });
+  const add = (id, init, declaratorNode) => {
+    if (id === null) {
+      return;
+    }
+    if (id.type === "Identifier") {
+      variables.set(id.name, {
+        type: "VariableDeclarator",
+        loc: id.loc,
+        id,
+        init,
+        parent: declaratorNode.parent,
+      });
+    } else if (id.type === "ObjectPattern") {
+      const expressionCollector = createInitValueExpressionCollector(
+        init,
+        declaratorNode,
+      );
+      id.properties.forEach((property) => expressionCollector.add(property));
+    } else if (id.type === "ArrayPattern") {
+      id.elements.forEach((element, index) => {
+        if (element?.type === "RestElement") {
+          add(element.argument, init, declaratorNode);
           return;
         }
-        const objectExpression = createObjectExpression(init);
-        id.properties.forEach((property) => {
-          if (property.type === "RestElement") {
-            return this.add(property.argument, init, declaratorNode);
-          }
-          const propValue = objectExpression.getValue(property.key.name);
-          if (propValue) {
-            return this.add(property.value, propValue, declaratorNode);
-          }
-        });
-      } else if (id.type === "ArrayPattern") {
-        id.elements.forEach((element, index) => {
-          if (element?.type === "RestElement") {
-            this.add(element.argument, init, declaratorNode);
-            return;
-          }
-          let elementValue;
-          if (init.type === "ArrayExpression") {
-            elementValue = init.elements[index] ?? null;
-          } else {
-            elementValue = createMemberExpressionNode(init, index, "Literal");
-            elementValue.property.parent = elementValue;
-          }
-          this.add(element, elementValue, declaratorNode);
-        });
-      }
-    },
+        let elementValue;
+        if (init.type === "ArrayExpression") {
+          elementValue = init.elements[index] ?? null;
+        } else {
+          elementValue = createMemberExpressionNode(init, index, "Literal");
+          elementValue.property.parent = elementValue;
+        }
+        add(element, elementValue, declaratorNode);
+      });
+    }
   };
+
+  const createInitValueExpressionCollector = (init, declaratorNode) => {
+    const expressionCollector =
+      init.type === "ObjectExpression"
+        ? createObjectExpressionCollector(init, declaratorNode)
+        : createNoObjectExpressionCollector(init, declaratorNode);
+    return {
+      add: (property) => {
+        if (property.type === "RestElement") {
+          return add(property.argument, init, declaratorNode);
+        }
+        expressionCollector.add(property);
+      },
+    };
+  };
+
+  const createNoObjectExpressionCollector = (init, declaratorNode) => {
+    return {
+      add: (property) => {
+        return add(
+          property.value,
+          createMemberExpressionNode(init, property.key.name),
+          declaratorNode,
+        );
+      },
+    };
+  };
+
+  const createObjectExpressionCollector = (init, declaratorNode) => {
+    const objectExpression = createObjectExpression(init);
+    return {
+      add: (property) => {
+        const propValue = objectExpression.getValue(property.key.name);
+        if (propValue) {
+          return add(property.value, propValue, declaratorNode);
+        }
+      },
+    };
+  };
+
+  return { add };
 };
 
 const createBlockStatement = (node) => {
